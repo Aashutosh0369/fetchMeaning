@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   </head>
+   <body>
+      <div style="display: none; position: absolute; top: 0; left: 0; z-index: 2; margin: 10px; right: 0;" class="alert alert-warning alert-dismissible fade show" role="alert">
+         <p style="margin: 0;" class = "meaning"></p>
+         <button type="button" class="btn-close"></button>
+      </div>
+      <p>In the serene meadow, the wind whispered through the grass, creating a calming melody that embraced the
+         surroundings. His eloquent speech captivated the audience, weaving a narrative that resonated deeply with each
+         listener. Despite facing numerous challenges, she remained resilient, bouncing back from setbacks with
+         unwavering determination. The enigmatic painting left viewers in awe, each stroke on the canvas seemed to hold a
+         secret, inviting contemplation and curiosity.
+      </p>
+      <p>
+         In the quiet solitude of the old library, where the hushed whispers of pages turning echoed through time, Emily found herself immersed in a forgotten world of words. The scent of aged paper and leather-bound books enveloped her as she traced the elegant script of an ancient tome with her fingertips. Each sentence unfurled like a secret, revealing a tapestry of ideas and emotions. As the afternoon sun cast a warm glow on the weathered shelves, Emily felt a sense of wonder and connection to the countless minds that had sought refuge in these pages. In that sacred space between reality and fiction, she discovered the transformative power of stories, where imagination danced freely, and the boundaries of her own world expanded with every carefully chosen word.
+      </p>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+      <script>
+         const bodyRef = document.querySelector('body');
+         let allMeaning = "";
+         let selectedText = "";
+         let isClosed = true;
+         bodyRef.addEventListener('mouseup', async function (event) {
+             if(selectedText === window.getSelection().toString().trim()) return;
+             selectedText = window.getSelection().toString().trim();
+             console.log(selectedText);
+             if (selectedText !== '') {
+                 
+                 const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${selectedText}`);
+                 const meaning = await response.json();
+                 const definitions = meaning[0].meanings[0].definitions;
+                 for (let i = 0; i < definitions.length; i++) {
+                     const definition = definitions[i].definition;
+                     allMeaning += definition + '\n';
+                 }
+                     
+                 const alert = document.querySelector('.alert') ;
+                 const meaningPara = alert.querySelector('.meaning') ;
+                 const btn = alert.querySelector('button');
+                 btn.addEventListener("click", () => {
+                   alert.style.display = "none"
+                   isClosed = true;
+                 });
+                 meaningPara.innerText = allMeaning ;
+                 alert.style.display = "block" ;   
+                 isClosed = false;
+                 allMeaning = "" ;
+             }
+         });
+         
+         bodyRef.addEventListener('mousedown', async function (event) {
+         if(isClosed) selectedText = "";
+         })
+         
+         bodyRef.addEventListener('touchend', async function (event) {
+            
+            // if(selectedText === window.getSelection().toString().trim()) return;
+             let selectedText = window.getSelection().toString().trim();
+             console.log(selectedText);
+             if (selectedText !== '') {
+                 
+                 const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${selectedText}`);
+                 const meaning = await response.json();
+                 const definitions = meaning[0].meanings[0].definitions;
+                 for (let i = 0; i < definitions.length; i++) {
+                     const definition = definitions[i].definition;
+                     allMeaning += definition + '\n';
+                 }
+         
+                 const alert = document.querySelector('.alert');
+                 const meaningPara = alert.querySelector('.meaning');
+                 const btn = alert.querySelector('button');
+                 btn.addEventListener("click", () => alert.style.display = "none");
+                 meaningPara.innerText = allMeaning ;
+                 alert.style.display = "block" ;
+                 
+                 allMeaning = "" ;
+             }
+         });
+      </script>
+   </body>
+</html>
